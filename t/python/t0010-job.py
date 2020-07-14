@@ -19,6 +19,11 @@ import datetime
 import signal
 from glob import glob
 
+if sys.hexversion >= 0x03000000:
+    from io import StringIO
+else:
+    from StringIO import StringIO
+
 import yaml
 import six
 
@@ -393,6 +398,17 @@ class TestJob(unittest.TestCase):
         """Test that `from_nest_command` produces a valid jobspec"""
         jobid = job.submit(self.fh, JobspecV2.from_nest_command(["sleep", "0"]))
         self.assertGreater(jobid, 0)
+
+    def test_27_v2_warns_experimental_feature(self):
+        """Test that using jobspec v2 emits a warning on stderr"""
+        err_buffer = StringIO()
+        sys.stderr = err_buffer
+        job.submit(self.fh, JobspecV2.from_nest_command(["sleep", "0"]))
+        captured_err = err_buffer.getvalue().strip()
+        self.assertEqual(
+            captured_err,
+            "Jobspec V2 is an experimental Feature. Flux may not support all allowed V2 resources",
+        )
 
 
 if __name__ == "__main__":
