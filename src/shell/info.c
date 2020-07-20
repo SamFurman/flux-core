@@ -137,7 +137,7 @@ static int shell_init_jobinfo (flux_shell_t *shell,
     json_error_t error;
 
     if (!R || !jobspec) {
-        /* Fetch missing jobinfo from broker job-info service */
+        /* Fetch missing jobinfo from broker job-info service */ 
         if (shell->standalone) {
             shell_log_error ("Invalid arguments: standalone and R/jobspec are unset");
             return -1;
